@@ -1,0 +1,222 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "$id": "file:///Users/rs2668/Development/other/iiif/discovery/validator/schema/",
+    "title": "Core Schema Definitions",
+    "description": "Core definitions that are used to compose the Activity Streams JSON-LD API",
+    "type": "object",
+    "definitions": {
+
+        "pageRef": {
+            "title": "Reference to a Page",
+            "description": "Page",
+            "type": "object",
+            "properties": {
+                "id": {"$ref": "#/definitions/idProp"},    
+                "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
+                    {"title": "Specific", "type": "string", "const": "OrderedCollectionPage"}]}
+            }
+        },
+
+        "collectionRef": {
+            "title": "Reference to a Collection",
+            "description": "Collection",
+            "type": "object",
+            "properties": {
+                "id": {"$ref": "#/definitions/idProp"},    
+                "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
+                    {"title": "Specific", "type": "string", "const": "OrderedCollection"}]}               
+            }
+        },
+
+        "ContextStringOrArray": {
+            "title": "JSON-LD Context",
+            "description": "Either an array of contexts, or a string containing the IIIF Discovery context URI",
+            "anyOf": [
+                {
+                    "title": "IIIF Change Discovery",
+                    "type": "string",
+                    "const": "http://iiif.io/api/discovery/1/context.json"
+                },
+                {
+                    "title": "Change Discovery with Extensions",
+                    "type": "array",
+                    "items": [
+                        {
+                            "type": "string",
+                            "format": "uri"
+                        }
+                    ]
+                }
+            ]
+        },
+
+        "idProp": {
+            "title": "the subject uri",
+            "description": "The URI of the entity",
+            "type": "string",
+            "format": "uri"
+        },
+        "typeProp": {
+            "title": "rdf:type",
+            "description": "The class of the entity",
+            "type": "string",
+            "examples": [
+                "OrderedCollection",
+                "OrderedCollectionPage",
+                "Manifest",
+                "Image"
+            ]
+        },
+        "rightsProp": {
+            "title": "dcterms:rights",
+            "description": "Rights that govern this entity",
+            "type": "string",
+            "format": "uri"            
+        },
+        "seeAlsoProp": {
+            "title": "rdfs:seeAlso",
+            "description": "Reference to another machine-readable document that describes this entity",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {"$ref": "#/definitions/idProp"},
+                    "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
+                                {"title": "Specific", "type": "string", "const": "Dataset"}]},
+                    "label": {"$ref": "#/definitions/languageMap"},
+                    "format": {"type": "string"},
+                    "profile": {"type": "string"}
+                }
+            }        
+        },
+
+        "partOfProp_coll": {
+            "title": "partOf",
+            "description": "Reference to one or more AS Collections that this Collection is part of",
+            "type": "array",
+            "items": {"$ref": "#/definitions/collectionRef"}
+        },
+
+        "Activity": {
+            "type": "object",
+            "properties": {
+                "id": {"$ref": "#/definitions/idProp"},
+                "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
+                        {"title": "Specific", "type": "string", 
+                            "enum": ["Create", "Update", "Delete", "Move", "Add", "Remove", "Refresh"]}]},
+                "object": {"$ref": "#/definitions/Resource"},
+                "target": {"$ref": "#/definitions/Resource"},
+                "endTime": {"type": "string", "format": "date-time"},
+                "startTime": {"type": "string", "format": "date-time"},
+                "summary": {"type": "string"},
+                "actor": {"$ref": "#/definitions/Actor"}
+            },
+            "required": ["type", "object"]
+        },
+
+        "Actor": {
+          "type": "object",
+          "properties": {
+                "id": {"$ref": "#/definitions/idProp"},
+                "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
+                        {"title": "Specific", "type": "string", 
+                            "enum": ["Application", "Organization", "Person"]}]}
+          },
+          "required": ["id", "type"]
+        },
+
+        "Resource": {
+            "type": "object",
+            "properties": {
+                "id": {"$ref": "#/definitions/idProp"},
+                "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
+                        {"title": "Specific", "type": "string", 
+                         "description": "Value SHOULD be Collection or Manifest, but MAY be any string"}]},                
+                "seeAlso": {"$ref": "#/definitions/seeAlsoProp"},
+                "canonical": {"type": "string", "format": "uri"},
+                "provider": {"type": "array", "items": {"$ref": "#/definitions/Provider"}}
+            },
+            "required": ["id", "type"]
+        },
+
+        "Provider": {
+            "type": "object",
+            "properties": {
+                "id": {"$ref": "#/definitions/idProp"},
+                "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
+                        {"title": "Specific", "type": "string", "const": "Agent"}]},     
+                "label": {"$ref": "#/definitions/languageMap"},
+                "homepage": {"$ref": "#/definitions/homepage"},
+                "logo": {"$ref": "#/definitions/logo"},
+                "seeAlso": {"$ref": "#/definitions/seeAlsoProp"}
+            },
+            "required": ["id", "type", "label"]
+        },
+
+        "homepage": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {"$ref": "#/definitions/idProp"},
+                    "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
+                        {"title": "Specific", "type": "string", "const": "Text"}]},     
+                    "label": {"$ref": "#/definitions/languageMap"},
+                    "format": { "type": "string" },
+                    "language": {
+                        "type": "array",
+                        "items": { "$ref": "#/definitions/BCP47" }
+                    }
+                }
+            }
+        },
+
+        "logo": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {"$ref": "#/definitions/idProp"},
+                    "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
+                        {"title": "Specific", "type": "string", "const": "Image"}]},     
+                    "label": {"$ref": "#/definitions/languageMap"},
+                    "format": { "type": "string" },
+                    "height": { "type": "number" },
+                    "width": { "type": "number" },
+                    "duration": { "type": "number" },
+                    "service": { "type": "array", "items": {"type": "object"}}
+                }
+            }
+        },
+
+        "BCP47": {
+            "anyOf": [
+                {
+                    "type":"string",
+                    "pattern": "^[a-zA-Z-][a-zA-Z-]*$"
+                },
+                {
+                    "type":"string",
+                    "pattern": "^none$"
+                }
+            ]
+        },
+
+        "languageMap": {
+            "title": "Language map, must have a language and value must be an array.",
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z-][a-zA-Z-]*$": {
+                    "type": "array",
+                    "items": { "type": "string"}
+                },
+                "^none$": {
+                    "type": "array",
+                    "items": { "type": "string"}
+                }
+            },
+            "additionalProperties": false
+        }
+
+    }
+}

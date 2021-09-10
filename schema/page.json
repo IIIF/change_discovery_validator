@@ -1,0 +1,21 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"$id": "file:///Users/rs2668/Development/other/iiif/discovery/validator/schema/",
+	"title": "AS Collection Page Schema",
+	"description": "",	
+	"type": "object",
+	"properties": {
+		"@context": {"$ref": "core.json#/definitions/ContextStringOrArray"},
+		"id": {"$ref": "core.json#/definitions/idProp"},	
+		"type": {"allOf": [{"title": "General", "$ref": "core.json#/definitions/typeProp"}, 
+			{"title": "Specific", "type": "string", "const": "OrderedCollectionPage"}]},
+		"next": {"$ref": "core.json#/definitions/pageRef"},
+		"prev": {"$ref": "core.json#/definitions/pageRef"},
+		"partOf": {"$ref": "core.json#/definitions/collectionRef"},
+		"startIndex": {"type": "number"},
+		"orderedItems": {"type": "array", "items": {"$ref": "core.json#/definitions/Activity"}}
+
+	},
+	"required": ["@context", "id", "type", "orderedItems"],
+	"additionalProperties": false
+}
