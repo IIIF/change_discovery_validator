@@ -73,6 +73,7 @@
             "type": "string",
             "format": "uri"            
         },
+
         "seeAlsoProp": {
             "title": "rdfs:seeAlso",
             "description": "Reference to another machine-readable document that describes this entity",
@@ -86,7 +87,9 @@
                     "label": {"$ref": "#/definitions/languageMap"},
                     "format": {"type": "string"},
                     "profile": {"type": "string"}
-                }
+                },
+                "required": ["id", "type"],
+                "additionalProperties": false
             }        
         },
 
@@ -111,18 +114,20 @@
                 "summary": {"type": "string"},
                 "actor": {"$ref": "#/definitions/Actor"}
             },
-            "required": ["type", "object"]
+            "required": ["type", "object"],
+            "additionalProperties": false
         },
 
         "Actor": {
-          "type": "object",
-          "properties": {
+            "type": "object",
+            "properties": {
                 "id": {"$ref": "#/definitions/idProp"},
                 "type": {"allOf": [{"title": "General", "$ref": "#/definitions/typeProp"}, 
                         {"title": "Specific", "type": "string", 
                             "enum": ["Application", "Organization", "Person"]}]}
-          },
-          "required": ["id", "type"]
+            },
+            "required": ["id", "type"],
+            "additionalProperties": false
         },
 
         "Resource": {
@@ -136,7 +141,8 @@
                 "canonical": {"type": "string", "format": "uri"},
                 "provider": {"type": "array", "items": {"$ref": "#/definitions/Provider"}}
             },
-            "required": ["id", "type"]
+            "required": ["id", "type"],
+            "additionalProperties": false
         },
 
         "Provider": {
@@ -150,7 +156,8 @@
                 "logo": {"$ref": "#/definitions/logo"},
                 "seeAlso": {"$ref": "#/definitions/seeAlsoProp"}
             },
-            "required": ["id", "type", "label"]
+            "required": ["id", "type", "label"],
+            "additionalProperties": false
         },
 
         "homepage": {
@@ -167,7 +174,9 @@
                         "type": "array",
                         "items": { "$ref": "#/definitions/BCP47" }
                     }
-                }
+                },
+            "required": ["id", "type"],
+            "additionalProperties": false                
             }
         },
 
@@ -186,7 +195,9 @@
                     "duration": { "type": "number" },
                     "service": { "type": "array", "items": {"type": "object"}}
                 }
-            }
+            },
+            "required": ["id", "type"],
+            "additionalProperties": false
         },
 
         "BCP47": {
